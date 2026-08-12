@@ -1,0 +1,173 @@
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 4rem);
+  gap: 1.5rem;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chat-header-info h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.text-accent {
+  color: var(--accent-color);
+}
+
+.status-online {
+  color: var(--success-color);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.chat-history {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+.chat-message-wrapper {
+  display: flex;
+  gap: 1rem;
+  max-width: 80%;
+}
+
+.message-right {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.message-left {
+  align-self: flex-start;
+}
+
+.message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.message-right .message-avatar {
+  background: rgba(102, 252, 241, 0.1);
+  color: var(--accent-color);
+}
+
+.message-left .message-avatar {
+  background: rgba(69, 162, 158, 0.1);
+  color: var(--accent-secondary);
+}
+
+.chat-message {
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  position: relative;
+}
+
+.message-ceo {
+  border-top-left-radius: 0;
+}
+
+.message-user {
+  background-color: var(--accent-color);
+  color: #000;
+  border-top-right-radius: 0;
+}
+
+.chat-message p {
+  margin: 0 0 0.5rem 0;
+  line-height: 1.5;
+}
+
+.message-time {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  display: block;
+  text-align: right;
+}
+
+.chat-input-area {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.chat-input {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 1rem;
+}
+
+.chat-input:focus {
+  background: rgba(0,0,0,0.5);
+}
+
+.btn-icon {
+  padding: 0.75rem;
+  aspect-ratio: 1;
+}
+
+/* Delegation Box Styles */
+.delegation-box {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(102, 252, 241, 0.2);
+  border-radius: var(--border-radius-sm);
+  margin-top: 1rem;
+  padding: 0.75rem;
+}
+
+.delegation-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--accent-color);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.delegation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.delegation-list li {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.05);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.delegation-list li strong {
+  color: var(--text-primary);
+  margin-right: 0.5rem;
+}
