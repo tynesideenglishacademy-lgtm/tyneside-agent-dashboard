@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
+import { apiFetch } from '../lib/adminAuth';
   Mail, FileText, CheckCircle2, RefreshCw, Send, 
   Sparkles, Building2, UserCheck
 } from 'lucide-react';
@@ -61,7 +62,7 @@ const EmailTriage: React.FC = () => {
   const fetchInbox = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/api/email/inbox');
+      const res = await apiFetch('/api/email/inbox');
       if (res.ok) {
         const data = await res.json();
         const rawEmails: IngestedEmail[] = data.emails || [];
@@ -94,7 +95,7 @@ const EmailTriage: React.FC = () => {
     e.preventDefault();
     setIsTriagingSim(true);
     try {
-      const res = await fetch('http://localhost:3001/api/email/triage', {
+      const res = await apiFetch('/api/email/triage', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
