@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Mail, CheckCircle2, Bot, ShieldCheck, RefreshCw } from 'lucide-react';
 import './Overview.css';
+import { apiFetch } from '../lib/adminAuth';
 
 interface StatCardProps {
   title: string;
@@ -51,7 +52,7 @@ const Overview: React.FC = () => {
   const fetchLiveMetrics = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/api/email/inbox');
+      const res = await apiFetch('/api/email/inbox');
       if (res.ok) {
         const data = await res.json();
         const emails = data.emails || [];
@@ -59,21 +60,21 @@ const Overview: React.FC = () => {
       }
 
       // Fetch Shepherd Pending Approvals
-      const sandboxRes = await fetch('http://localhost:3001/api/sandbox/pending');
+      const sandboxRes = await apiFetch('/api/sandbox/pending');
       if (sandboxRes.ok) {
         const sandboxData = await sandboxRes.json();
         setPendingApprovals((sandboxData.pending || []).length);
       }
 
       // Fetch Tasks
-      const tasksRes = await fetch('http://localhost:3001/api/agent/ceo/tasks');
+      const tasksRes = await apiFetch('/api/agent/ceo/tasks');
       if (tasksRes.ok) {
         const tasksData = await tasksRes.json();
         setActiveTasks(tasksData.tasks || []);
       }
 
       // Fetch Audit Logs
-      const auditRes = await fetch('http://localhost:3001/api/audit-logs');
+      const auditRes = await apiFetch('/api/audit-logs');
       if (auditRes.ok) {
         const auditData = await auditRes.json();
         setAuditLogs(auditData.logs || []);
