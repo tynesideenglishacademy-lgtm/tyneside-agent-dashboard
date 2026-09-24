@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Overview from './pages/Overview';
@@ -7,12 +8,25 @@ import AgentWorkspace from './pages/AgentWorkspace';
 import SocialDashboard from './pages/SocialDashboard';
 import BlogDashboard from './pages/BlogDashboard';
 import EmailTriage from './pages/EmailTriage';
+import AdminLogin from './components/AdminLogin';
+import { getStoredSession, signOutAdmin, type AdminSession } from './lib/adminAuth';
 
 function App() {
+  const [session, setSession] = useState<AdminSession | null>(() => getStoredSession());
+
+  if (!session) {
+    return <AdminLogin onSignedIn={setSession} />;
+  }
+
+  const handleSignOut = async () => {
+    await signOutAdmin();
+    setSession(null);
+  };
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout onSignOut={handleSignOut} />}>
           <Route index element={<Overview />} />
           <Route path="ceo-chat" element={<CeoChat />} />
           <Route path="connections" element={<Connections />} />

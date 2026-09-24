@@ -3,6 +3,7 @@ import {
   Edit3, Search, Sparkles, FileText, Eye, Copy, Check, 
   Globe, Hash
 } from 'lucide-react';
+import { apiFetch } from '../lib/adminAuth';
 import './BlogDashboard.css';
 
 interface KeywordItem {
@@ -37,7 +38,7 @@ const BlogDashboard: React.FC = () => {
     if (!searchQuery.trim()) return;
     setIsSearchingWeb(true);
     try {
-      const res = await fetch('http://localhost:3001/api/agent/web-search', {
+      const res = await apiFetch('/api/agent/web-search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: searchQuery, platform: searchPlatform })

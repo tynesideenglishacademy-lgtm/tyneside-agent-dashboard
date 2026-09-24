@@ -4,6 +4,7 @@ import {
   Bot, Send, Settings, PlayCircle, Clock, CheckCircle2, 
   ShieldAlert, BookOpen, Save, RotateCcw, Sparkles, MessageSquare, ListTodo, Code2, Cpu
 } from 'lucide-react';
+import { apiFetch } from '../lib/adminAuth';
 import { defaultPersonas, type AgentPersona } from '../data/agentPersonas';
 import './AgentWorkspace.css';
 
@@ -79,7 +80,7 @@ const AgentWorkspace: React.FC = () => {
 
   const fetchTasks = async (key: string) => {
     try {
-      const res = await fetch(`http://localhost:3001/api/agent/${key}/tasks`);
+      const res = await apiFetch(`/api/agent/${key}/tasks`);
       if (res.ok) {
         const data = await res.json();
         setLiveTasks(data.tasks || []);
@@ -99,7 +100,7 @@ const AgentWorkspace: React.FC = () => {
     setIsSending(true);
 
     try {
-      const res = await fetch(`http://localhost:3001/api/agent/${agentId}/chat`, {
+      const res = await apiFetch(`/api/agent/${agentId}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userText })

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Send, Bot, User, Command, PlayCircle, Layers, Loader2 } from 'lucide-react';
 import './CeoChat.css';
+import { apiFetch } from '../lib/adminAuth';
 
 interface Message {
   id: string;
@@ -40,7 +41,7 @@ const CeoChat: React.FC = () => {
 
     try {
       // Call the new Orchestration Backend
-      const response = await fetch('http://localhost:3001/api/ceo/chat', {
+      const response = await apiFetch('/api/ceo/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
