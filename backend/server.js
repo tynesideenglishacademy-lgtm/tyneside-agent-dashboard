@@ -19,13 +19,60 @@ app.use(express.json());
 // Apply Global Rate Limiter to all /api/ endpoints
 app.use('/api/', globalApiLimiter);
 
-// Mount Sandbox Routes
-app.use('/api/sandbox', sandboxRoutes);
-
 // Initialize Supabase Connection (Connected directly to Tyneside CRM DB)
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey, { auth: { persistSession: false } });
+
+/**
+ * The Agent Dashboard can read email, agent tasks, approvals and CRM-backed
+ * operational data through a service-role client. Every API route therefore
+ * requires a verified Supabase user and the trusted server-controlled Admin
+ * app_metadata role. Never trust a role supplied by the browser.
+ */
+const requireAdmin = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization || '';
+    if (!authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+
+    const token = authHeader.slice(7).trim();
+    if (!token) return res.status(401).json({ error: 'Authentication required.' });
+
+    const { data, error } = await supabase.auth.getUser(token);
+    const user = data?.user;
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid or expired session.' });
+    }
+
+    let role = user.app_metadata?.role || '';
+    if (role !== 'Admin') {
+      const { data: staff } = await supabase
+        .from('staff')
+        .select('role')
+        .or(`auth_id.eq.${user.id},id.eq.${user.id}`)
+        .maybeSingle();
+      role = staff?.role || role;
+    }
+
+    if (role !== 'Admin') {
+      return res.status(403).json({ error: 'Administrator access required.' });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error('[auth] Admin verification failed:', error?.message || error);
+    return res.status(401).json({ error: 'Could not verify administrator session.' });
+  }
+};
+
+// All Agent Dashboard API endpoints are admin-only.
+app.use('/api', requireAdmin);
+
+// Mount Sandbox Routes only after the global admin guard.
+app.use('/api/sandbox', sandboxRoutes);
 
 // Determine LLM Provider (NVIDIA NIM vs OpenAI)
 const isNvidia = !!(process.env.NVIDIA_API_KEY && process.env.NVIDIA_API_KEY !== 'placeholder_key');
