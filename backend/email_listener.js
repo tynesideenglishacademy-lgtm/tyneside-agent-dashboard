@@ -12,7 +12,10 @@ export const liveIngestedEmails = [];
 // Supabase Connection (Connected directly to Tyneside CRM DB)
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase =
+  supabaseUrl && supabaseKey
+    ? createClient(supabaseUrl, supabaseKey, { auth: { persistSession: false } })
+    : null;
 
 // NVIDIA NIM setup
 const isNvidia = !!(process.env.NVIDIA_API_KEY && process.env.NVIDIA_API_KEY !== 'placeholder_key');
