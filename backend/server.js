@@ -22,7 +22,10 @@ app.use('/api/', globalApiLimiter);
 // Initialize Supabase Connection (Connected directly to Tyneside CRM DB)
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey, { auth: { persistSession: false } });
+const supabase =
+  supabaseUrl && supabaseKey
+    ? createClient(supabaseUrl, supabaseKey, { auth: { persistSession: false } })
+    : null;
 
 /**
  * The Agent Dashboard can read email, agent tasks, approvals and CRM-backed
@@ -32,6 +35,10 @@ const supabase = createClient(supabaseUrl, supabaseKey, { auth: { persistSession
  */
 const requireAdmin = async (req, res, next) => {
   try {
+    if (!supabase) {
+      return res.status(503).json({ error: 'Agent Dashboard database connection is not configured.' });
+    }
+
     const authHeader = req.headers.authorization || '';
     if (!authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'Authentication required.' });
@@ -351,12 +358,17 @@ app.get('/api/email/inbox', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Master CEO & Agent Network Engine running on port ${PORT}`);
-  if (isNvidia) {
-    console.log(`🚀 Using NVIDIA NIM API (${defaultModelName}) - Costs Reduced!`);
-  }
 
-  // Trigger Live IMAP Sync on startup
-  syncAllAcademyInboxes().catch(e => console.error('IMAP startup check notice:', e.message));
-});
+// Vercel's Express service imports the app. Only open a socket for local runs.
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Master CEO & Agent Network Engine running on port ${PORT}`);
+    if (isNvidia) {
+      console.log(`🚀 Using NVIDIA NIM API (${defaultModelName}) - Costs Reduced!`);
+    }
+
+    syncAllAcademyInboxes().catch(e => console.error('IMAP startup check notice:', e.message));
+  });
+}
+
+export default app;
