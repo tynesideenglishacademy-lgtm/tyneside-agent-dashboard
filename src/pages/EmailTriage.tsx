@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
-import { apiFetch } from '../lib/adminAuth';
   Mail, FileText, CheckCircle2, RefreshCw, Send, 
   Sparkles, Building2, UserCheck
 } from 'lucide-react';
+import { apiFetch } from '../lib/adminAuth';
 import './EmailTriage.css';
 
 interface IngestedEmail {
